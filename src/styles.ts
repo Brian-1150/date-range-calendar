@@ -6,8 +6,10 @@ export const flex_row = styled.div`
     flex-flow: row nowrap;
     `;
 
-export const main_flex_container = styled.div`
-  background-color: lightgray;
+export const main_flex_container = styled.div.attrs(props => ({
+  color: props.color || 'lightgray',
+}))`
+  background-color: ${props => props.color};
   display: flex;
   flex-flow: column nowrap;
   width: 90vw;
@@ -39,8 +41,10 @@ export const grid_flex_container = styled.div`
   flex-flow: column nowrap;
 `;
 
-export const grid_flex_container_gray_p = styled.p`
-  color: red;
+export const blackout_days_p = styled.p.attrs(props => ({
+  color: props.color || 'red',
+}))`
+  color: ${props => props.color};
   font-size: 12px;
   text-align: center;
   vertical-align: middle;

@@ -16,7 +16,7 @@ type CalendarProps = {
   rangeColor?: string
   startSet?: (start: string) => void
   endSet?: (end: string) => void
-
+  blackoutColor?: string
 }
 
 export const Calendar = (props: CalendarProps) => {
@@ -36,14 +36,14 @@ export const Calendar = (props: CalendarProps) => {
   const { width } = useViewPortSize();
 
   useEffect(() => {
-    if(props.startSet)
-    props.startSet(pickUpDate)
+    if (props.startSet)
+      props.startSet(pickUpDate)
 
   }, [pickUpDate]);
 
   useEffect(() => {
-    if(props.endSet)
-    props.endSet(dropOffDate)
+    if (props.endSet)
+      props.endSet(dropOffDate)
 
   }, [dropOffDate]);
 
@@ -181,7 +181,7 @@ export const Calendar = (props: CalendarProps) => {
   return (
     <>
       <div>
-        <Grid handleCalendarClicks={(e) => handleCalendarClicks(e)}
+        <Grid handleCalendarClicks={(e) => handleCalendarClicks(e)} bgColor={props.bgColor}
         />
       </div>
 
@@ -192,7 +192,8 @@ export const Calendar = (props: CalendarProps) => {
 
 interface IGridProps {
   handleCalendarClicks: (e: React.MouseEvent<HTMLDivElement>) => void
-
+  bgColor?: string
+  blackoutColor?: string
 }
 function Grid(props: IGridProps) {
 
@@ -216,7 +217,7 @@ function Grid(props: IGridProps) {
   }
   return (
     <>
-      <styles.main_flex_container>
+      <styles.main_flex_container blackoutColor={props.blackoutColor} color={props.bgColor}>
         {monthsArray}
       </styles.main_flex_container>
     </>
@@ -229,6 +230,7 @@ interface IMonthProps {
   year: string
   handleCalendarClicks: (e: React.MouseEvent<HTMLDivElement>) => void;
   strikethroughDays: boolean
+  blackoutColor?: string
 }
 
 function CalendarMonth(props: IMonthProps) {
@@ -310,9 +312,9 @@ function CalendarBox(props: CalendarBoxProps) {
     for (let i = 0; i < blackoutDays.length; i++) {
       if (value == blackoutDays[i]) {
         return (
-          <styles.grid_flex_container_gray_p onClick={() => { }}>
+          <styles.blackout_days_p onClick={() => { }}>
             {value}
-          </styles.grid_flex_container_gray_p>
+          </styles.blackout_days_p>
         );
       }
     }

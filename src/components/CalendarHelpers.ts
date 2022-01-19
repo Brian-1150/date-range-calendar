@@ -35,7 +35,7 @@ export const getCurrentMonth = () => {
         case 9: return 'October'
         case 10: return 'November'
         case 11: return 'December'
-        default: 'oops'
+        default: return 'oops'
     }
     return null;
 }
@@ -125,7 +125,7 @@ export const getNumberOfDaysInMonth = (month: number, year: string) => {
 
 export const getNumberOfRows = (currentMonthAsNum: number, numberOfDaysInMonth: number, dayOfTheWeek: number) => {
     currentMonthAsNum = 0;
-    switch (numberOfDaysInMonth  + currentMonthAsNum - (21 + (7 - dayOfTheWeek))) {
+    switch (numberOfDaysInMonth + currentMonthAsNum - (21 + (7 - dayOfTheWeek))) {
         case 0: return 4;
         case 8: case 9: return 6;
         default: return 5;
