@@ -30,6 +30,7 @@ export const Calendar = (props: CalendarProps) => {
   const [dropOffDateSelected, dropOffDateSelectedSet] = useState(false)
   const [pickMonth, pickMonthSet] = useState(0)
   const [monthRangeLimit, monthRangeLimitSet] = useState(2);
+  const [dayRangeLimit, dayRangeLimitSet] = useState(31);
   // const [pickUpTime, pickUpTimeSet] = useState('Pick-up Time')
   // const [dropOffTime, dropOffTimeSet] = useState('Drop-off Time')
   // const [pickUpTimeSelected, pickUpTimeSelectedSet] = useState(false)
@@ -39,6 +40,7 @@ export const Calendar = (props: CalendarProps) => {
   useEffect(() => {
     let days = 30;
     if (props.rangeLimit) {
+      dayRangeLimitSet(props.rangeLimit)
       for (let i = 2; i < 26; i++) {
         if (props.rangeLimit < days) {
           monthRangeLimitSet(i);
@@ -70,11 +72,17 @@ export const Calendar = (props: CalendarProps) => {
       monthYear = monthYear.slice(0, -1) //Removes the navigation '>' & '<'
     }
     let targetMonth = calendarHelper.getMonthAsNum(monthYear)
-    console.log(pickMonth);
-    console.log('target', targetMonth);
 
 
-    const proceed = (targetMonth - pickMonth < monthRangeLimit) && (targetMonth - pickMonth > 0) && ((31 - pickUpDayAsNumber) + parseInt(input.innerText) < 31)
+    const proceed = (targetMonth - pickMonth < monthRangeLimit) && (targetMonth - pickMonth > 0) && ((calendarHelper.getNumberOfDaysInMonth(pickMonth, monthYear.substring(monthYear.indexOf(" ") + 1)) - pickUpDayAsNumber) + parseInt(input.innerText) < dayRangeLimit)
+
+    console.log(pickUpDayAsNumber);
+    console.log(parseInt(input.innerText));
+
+    console.log(dayRangeLimit);
+
+
+
     if (input.innerText == '') {
       return;
     }

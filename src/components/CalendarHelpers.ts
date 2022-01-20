@@ -46,61 +46,35 @@ export const getNextMonth = (num: number) => { //expecting 9 for September
 }
 
 export const getMonthAsNum = (dateString: string) => {
-    if (dateString.includes(dayjs().year().toString())) {
-        if (dateString.includes('Jan'))
-            return 1;
-        if (dateString.includes('Feb'))
-            return 2;
-        if (dateString.includes('Mar'))
-            return 3;
-        if (dateString.includes('Apr'))
-            return 4;
-        if (dateString.includes('May'))
-            return 5;
-        if (dateString.includes('Jun'))
-            return 6;
-        if (dateString.includes('Jul'))
-            return 7;
-        if (dateString.includes('Aug'))
-            return 8;
-        if (dateString.includes('Sep'))
-            return 9;
-        if (dateString.includes('Oct'))
-            return 10;
-        if (dateString.includes('Nov'))
-            return 11;
-        if (dateString.includes('Dec'))
-            return 12;
-        return 0;
-    }
-    else {
-        if (dateString.includes('Jan'))
-            return 13;
-        if (dateString.includes('Feb'))
-            return 14;
-        if (dateString.includes('Mar'))
-            return 15;
-        if (dateString.includes('Apr'))
-            return 16;
-        if (dateString.includes('May'))
-            return 17;
-        if (dateString.includes('Jun'))
-            return 18;
-        if (dateString.includes('Jul'))
-            return 19;
-        if (dateString.includes('Aug'))
-            return 20;
-        if (dateString.includes('Sep'))
-            return 21;
-        if (dateString.includes('Oct'))
-            return 22;
-        if (dateString.includes('Nov'))
-            return 23;
-        if (dateString.includes('Dec'))
-            return 24;
-        return 0;
-    }
+    let year = parseInt(dateString.substring(dateString.indexOf(" ") + 1));
+    let increment = year - dayjs().year();
+    if (dateString.includes('Jan'))
+        return 1 + increment;
+    if (dateString.includes('Feb'))
+        return 2 + increment;
+    if (dateString.includes('Mar'))
+        return 3 + increment;
+    if (dateString.includes('Apr'))
+        return 4 + increment;
+    if (dateString.includes('May'))
+        return 5 + increment;
+    if (dateString.includes('Jun'))
+        return 6 + increment;
+    if (dateString.includes('Jul'))
+        return 7 + increment;
+    if (dateString.includes('Aug'))
+        return 8 + increment;
+    if (dateString.includes('Sep'))
+        return 9 + increment;
+    if (dateString.includes('Oct'))
+        return 10 + increment;
+    if (dateString.includes('Nov'))
+        return 11 + increment;
+    if (dateString.includes('Dec'))
+        return 12 + increment;
+    return 0;
 }
+
 
 // export const getCurrentMonth2 = () => {
 //     return monthNames[new Date().getMonth()]
