@@ -6,10 +6,13 @@ export const flex_row = styled.div`
     flex-flow: row nowrap;
     `;
 
-export const main_flex_container = styled.div.attrs(props => ({
-  color: props.color || 'lightgray',
-}))`
-  background-color: ${props => props.color};
+// type calProps = {
+//   color?: string
+//   blackoutColor?: string
+// }
+
+export const main_flex_container = styled.div`
+  background-color: ${props => props.color ? props.color : 'lightgray'};
   display: flex;
   flex-flow: column nowrap;
   width: 90vw;
@@ -41,10 +44,8 @@ export const grid_flex_container = styled.div`
   flex-flow: column nowrap;
 `;
 
-export const blackout_days_p = styled.p.attrs(props => ({
-  color: props.color || 'red',
-}))`
-  color: ${props => props.color};
+export const blackout_days_p = styled.p`
+  color: ${props => props.color ? props.color : 'red'};
   font-size: 12px;
   text-align: center;
   vertical-align: middle;
