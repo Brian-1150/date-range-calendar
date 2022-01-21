@@ -47,7 +47,8 @@ export const getNextMonth = (num: number) => { //expecting 9 for September
 
 export const getMonthAsNum = (dateString: string) => {
     let year = parseInt(dateString.substring(dateString.indexOf(" ") + 1));
-    let increment = year - dayjs().year();
+    let increment = (year - dayjs().year()) * 12;
+
     if (dateString.includes('Jan'))
         return 1 + increment;
     if (dateString.includes('Feb'))

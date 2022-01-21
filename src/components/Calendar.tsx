@@ -11,12 +11,15 @@ type CalendarProps = {
   end?: string //format mmyy
   rangeLimit?: number  //default 30
   bgColor?: string
-  startColor?: string
-  endColor?: string
+  startBgColor?: string
+  endBgColor?: string
   rangeColor?: string
   startSet?: (start: string) => void
   endSet?: (end: string) => void
   blackoutColor?: string
+  textColor?: string
+  highlightedTextColor?: string
+
 }
 
 export const Calendar = (props: CalendarProps) => {
@@ -29,14 +32,26 @@ export const Calendar = (props: CalendarProps) => {
   const [pickUpDateSelected, pickUpDateSelectedSet] = useState(false)
   const [dropOffDateSelected, dropOffDateSelectedSet] = useState(false)
   const [pickMonth, pickMonthSet] = useState(0)
-  const [monthRangeLimit, monthRangeLimitSet] = useState(2);
+  const [monthRangeLimit, monthRangeLimitSet] = useState(2); // 24 month limit
   const [dayRangeLimit, dayRangeLimitSet] = useState(31);
   // const [pickUpTime, pickUpTimeSet] = useState('Pick-up Time')
   // const [dropOffTime, dropOffTimeSet] = useState('Drop-off Time')
   // const [pickUpTimeSelected, pickUpTimeSelectedSet] = useState(false)
   // const [dropOffTimeSelected, dropOffTimeSelectedSet] = useState(false)
   const { width } = useViewPortSize();
+  const [incoming, incomingSet] = useState<CalendarProps>({
+    bgColor: props.bgColor ? props.bgColor : "gray",
+    rangeLimit: props.rangeLimit ? props.rangeLimit : 30,
+    rangeColor: props.rangeColor ? props.rangeColor : 'dodgerblue',
+    blackoutColor: props.blackoutColor ? props.blackoutColor : 'red',
+    begin: props.begin ? props.begin : today.month().valueOf.toString() + today.year().toString(),
+    end: props.end ? props.end : today.month().valueOf().toString() + ((today.year()) + 1).toString(),
+    endBgColor: props.endBgColor ? props.endBgColor : 'steelblue',
+    startBgColor: props.startBgColor ? props.startBgColor : 'steelblue',
+    textColor: props.textColor ? props.textColor : 'black',
+    highlightedTextColor: props.highlightedTextColor ? props.highlightedTextColor : 'white',
 
+  });
   useEffect(() => {
     let days = 30;
     if (props.rangeLimit) {
@@ -48,12 +63,18 @@ export const Calendar = (props: CalendarProps) => {
         }
         days = days + 30
       }
+      for (let i = 0; i > 10; i++) {
+
+      }
+
     }
+
   }, []);
 
   useEffect(() => {
     if (props.startSet)
       props.startSet(pickUpDate)
+    console.log(incoming.highlightedTextColor);
 
   }, [pickUpDate]);
 
@@ -73,14 +94,22 @@ export const Calendar = (props: CalendarProps) => {
     }
     let targetMonth = calendarHelper.getMonthAsNum(monthYear)
 
+    let inbetweendays = 0;
+    let targetYear = parseInt(monthYear.substring(monthYear.indexOf(" ") + 1))
 
-    const proceed = (targetMonth - pickMonth < monthRangeLimit) && (targetMonth - pickMonth > 0) && ((calendarHelper.getNumberOfDaysInMonth(pickMonth, monthYear.substring(monthYear.indexOf(" ") + 1)) - pickUpDayAsNumber) + parseInt(input.innerText) < dayRangeLimit)
+    for (let i = pickMonth + 1; i < targetMonth; i++) {
+      console.log('pickmonth', pickMonth);
+      inbetweendays += calendarHelper.getNumberOfDaysInMonth(i, targetYear.toString())
 
-    console.log(pickUpDayAsNumber);
-    console.log(parseInt(input.innerText));
+      if (i % 13 == 0) {
+        console.log('i%13');
 
-    console.log(dayRangeLimit);
+        targetYear++
+      }
+    }
 
+    const proceed = (targetMonth - pickMonth < monthRangeLimit) && (targetMonth - pickMonth > 0) && (((calendarHelper.getNumberOfDaysInMonth(pickMonth, targetYear.toString()) - pickUpDayAsNumber) +
+      (inbetweendays) + parseInt(input.innerText)) < dayRangeLimit)
 
 
     if (input.innerText == '') {
@@ -126,8 +155,8 @@ export const Calendar = (props: CalendarProps) => {
   }
   const highlightSelection = (e: React.MouseEvent<HTMLDivElement>) => {
     const input = e.target as HTMLElement;
-    input.style.color = 'white'
-    input.style.backgroundColor = 'steelblue'
+    input.style.color = incoming.highlightedTextColor as string
+    input.style.backgroundColor = incoming.startBgColor as string
   }
   const resetDivs = (times?: boolean) => {
     let timeDivs = document.querySelectorAll('aside p, section p')
@@ -143,13 +172,13 @@ export const Calendar = (props: CalendarProps) => {
 
     container.forEach((div) => {
       let box = div as HTMLParagraphElement;
-      if ((box.style.color == 'white') || (box.style.backgroundColor == 'lightblue') || box.style.backgroundColor == 'steelblue') {
+      if ((box.style.color == incoming.highlightedTextColor) || (box.style.backgroundColor == incoming.rangeColor) || box.style.backgroundColor == incoming.startBgColor) {
         box.style.color = 'inherit';
         box.style.fontWeight = 'inherit';
         box.style.backgroundColor = 'inherit';
-        if ((box.parentElement?.parentElement?.previousSibling?.previousSibling?.textContent as string).includes(dayjs().format('MMMM')) && (parseInt(div.textContent as string)) < parseInt(dayjs().format('D'))) {
-          box.style.color = 'lightgray';
-        }
+        // if ((box.parentElement?.parentElement?.previousSibling?.previousSibling?.textContent as string).includes(dayjs().format('MMMM')) && (parseInt(div.textContent as string)) < parseInt(dayjs().format('D'))) {
+        //   box.style.color = incoming.blackoutColor as string;
+        // }
       }
     })
   }
@@ -166,13 +195,17 @@ export const Calendar = (props: CalendarProps) => {
     let row1ofTargetMonth = input.parentElement?.parentElement?.firstChild;
     let row1ofPrevMonth = width > 999 ?
       input.parentElement?.parentElement?.previousElementSibling?.previousElementSibling?.parentElement?.previousElementSibling?.firstChild?.nextSibling?.nextSibling?.firstChild
-      : input.parentElement?.parentElement?.previousElementSibling?.previousElementSibling?.previousElementSibling?.firstChild;
+      : input.parentElement?.parentElement?.previousSibling?.previousSibling?.previousSibling?.firstChild;
+    // let row1OfPrevPrevMonth = input.parentElement?.parentElement?.previousElementSibling?.previousElementSibling?.previousElementSibling?.previousElementSibling?.previousElementSibling?.previousElementSibling;
+
+    // console.log('before', row1OfPrevPrevMonth);
+
     if (targetMonth == pickMonth) {
       for (let i = 0; i < 6; i++) {
         let child = row1ofTargetMonth?.firstChild as HTMLElement
         for (let j = 0; j < 7; j++) {
           if (parseInt(child?.textContent as string) > pudan && parseInt(child?.textContent as string) < dodan) {
-            child.style.backgroundColor = 'lightblue'
+            child.style.backgroundColor = incoming.rangeColor as string
           }
           child = child?.nextSibling as HTMLElement
         }
@@ -180,27 +213,57 @@ export const Calendar = (props: CalendarProps) => {
       }
     }
     else if (proceed) {
+
+
       for (let i = 0; i < 6; i++) {
         let child = row1ofTargetMonth?.firstChild as HTMLElement
         for (let j = 0; j < 7; j++) {
           if (parseInt(child?.textContent as string) < dodan) {
-            child.style.backgroundColor = 'lightblue'
+            child.style.backgroundColor = incoming.rangeColor as string
           }
           child = child?.nextSibling as HTMLElement
         }
 
-        row1ofTargetMonth = row1ofTargetMonth?.nextSibling
+        row1ofTargetMonth = row1ofTargetMonth?.nextSibling ? row1ofTargetMonth.nextSibling : row1ofTargetMonth
       }
-      for (let i = 0; i < 6; i++) {
-        let child2 = row1ofPrevMonth?.firstChild as HTMLElement
-        for (let j = 0; j < 7; j++) {
-          if (parseInt(child2?.textContent as string) > pudan) {
-            child2.style.backgroundColor = 'lightblue'
+      let diff = targetMonth - pickMonth;
+      for (let m = 0; m < diff; m++) {
+        for (let i = 0; i < 6; i++) {
+          let child3 = row1ofPrevMonth?.firstChild as HTMLElement
+          for (let j = 0; j < 7; j++) {
+            if (m == diff - 1) {
+              if (parseInt(child3?.textContent as string) > pudan) {
+                child3.style.backgroundColor = incoming.rangeColor as string
+                child3 = child3?.nextSibling as HTMLElement
+
+              } else {
+                child3 = child3?.nextSibling as HTMLElement
+              }
+            }
+            else {
+              if (parseInt(child3?.textContent as string) > 0) {
+                child3.style.backgroundColor = incoming.rangeColor as string
+              }
+              child3 = child3?.nextSibling as HTMLElement
+            }
           }
-          child2 = child2?.nextSibling as HTMLElement
+          row1ofPrevMonth = row1ofPrevMonth?.nextSibling ? row1ofPrevMonth.nextSibling : row1ofPrevMonth
         }
-        row1ofPrevMonth = row1ofPrevMonth?.nextSibling
+        row1ofPrevMonth = row1ofPrevMonth?.parentElement?.previousSibling?.previousSibling?.previousSibling?.firstChild
       }
+
+
+      // this needs to target pickMonth not prevMonth
+      // for (let i = 0; i < 6; i++) {
+      //   let child2 = row1ofPrevMonth?.firstChild as HTMLElement
+      //   for (let j = 0; j < 7; j++) {
+      //     if (parseInt(child2?.textContent as string) > pudan) {
+      //       child2.style.backgroundColor = incoming.rangeColor as string
+      //     }
+      //     child2 = child2?.nextSibling as HTMLElement
+      //   }
+      //   row1ofPrevMonth = row1ofPrevMonth?.nextSibling
+      // }
     }
   }
 
