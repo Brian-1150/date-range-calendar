@@ -3,12 +3,13 @@ import * as calendarHelper from './CalendarHelpers'
 import * as styles from '../styles'
 import dayjs from "dayjs";
 import useViewPortSize from "../Hooks/viewPortSize";
+
 // { children }: { children: ReactNode }
 const today = dayjs();
 
 type CalendarProps = {
-  begin?: string //format mmyym(0820 for august 2020)
-  end?: string //format mmyy
+  begin?: string //format mmyyyy(082020 for august 2020)
+  calendarLength?: number // in months
   rangeLimit?: number  //default 30
   bgColor?: string
   startBgColor?: string
@@ -19,6 +20,7 @@ type CalendarProps = {
   blackoutColor?: string
   textColor?: string
   highlightedTextColor?: string
+  blackoutPast?: boolean // option to turn it off only works if custom begin not selected
 
 }
 
@@ -39,17 +41,18 @@ export const Calendar = (props: CalendarProps) => {
   // const [pickUpTimeSelected, pickUpTimeSelectedSet] = useState(false)
   // const [dropOffTimeSelected, dropOffTimeSelectedSet] = useState(false)
   const { width } = useViewPortSize();
-  const [incoming, incomingSet] = useState<CalendarProps>({
+  const [incoming] = useState<CalendarProps>({
     bgColor: props.bgColor ? props.bgColor : "gray",
     rangeLimit: props.rangeLimit ? props.rangeLimit : 30,
     rangeColor: props.rangeColor ? props.rangeColor : 'dodgerblue',
     blackoutColor: props.blackoutColor ? props.blackoutColor : 'red',
-    begin: props.begin ? props.begin : today.month().valueOf.toString() + today.year().toString(),
-    end: props.end ? props.end : today.month().valueOf().toString() + ((today.year()) + 1).toString(),
+    begin: props.begin ? props.begin : today.format('MM').toString() + today.year().toString(),
+    calendarLength: props.calendarLength ? props.calendarLength : 12,
     endBgColor: props.endBgColor ? props.endBgColor : 'steelblue',
     startBgColor: props.startBgColor ? props.startBgColor : 'steelblue',
     textColor: props.textColor ? props.textColor : 'black',
     highlightedTextColor: props.highlightedTextColor ? props.highlightedTextColor : 'white',
+    blackoutPast: props.blackoutPast == false ? false : true,
 
   });
   useEffect(() => {
@@ -74,7 +77,6 @@ export const Calendar = (props: CalendarProps) => {
   useEffect(() => {
     if (props.startSet)
       props.startSet(pickUpDate)
-    console.log(incoming.highlightedTextColor);
 
   }, [pickUpDate]);
 
@@ -89,6 +91,7 @@ export const Calendar = (props: CalendarProps) => {
 
     const input = e.target as HTMLDivElement;
     let monthYear = input.parentElement?.parentElement?.previousSibling?.previousSibling?.textContent as string
+
     if (width > 999) {
       monthYear = monthYear.slice(0, -1) //Removes the navigation '>' & '<'
     }
@@ -98,11 +101,9 @@ export const Calendar = (props: CalendarProps) => {
     let targetYear = parseInt(monthYear.substring(monthYear.indexOf(" ") + 1))
 
     for (let i = pickMonth + 1; i < targetMonth; i++) {
-      console.log('pickmonth', pickMonth);
       inbetweendays += calendarHelper.getNumberOfDaysInMonth(i, targetYear.toString())
 
       if (i % 13 == 0) {
-        console.log('i%13');
 
         targetYear++
       }
@@ -110,7 +111,6 @@ export const Calendar = (props: CalendarProps) => {
 
     const proceed = (targetMonth - pickMonth < monthRangeLimit) && (targetMonth - pickMonth > 0) && (((calendarHelper.getNumberOfDaysInMonth(pickMonth, targetYear.toString()) - pickUpDayAsNumber) +
       (inbetweendays) + parseInt(input.innerText)) < dayRangeLimit)
-
 
     if (input.innerText == '') {
       return;
@@ -271,7 +271,7 @@ export const Calendar = (props: CalendarProps) => {
   return (
     <>
       <div>
-        <Grid blackoutColor={props.blackoutColor} handleCalendarClicks={(e) => handleCalendarClicks(e)} bgColor={props.bgColor}
+        <Grid blackoutPast={incoming.blackoutPast} calendarLength={incoming.calendarLength} begin={incoming.begin} blackoutColor={props.blackoutColor} handleCalendarClicks={(e) => handleCalendarClicks(e)} bgColor={props.bgColor}
         />
       </div>
 
@@ -284,18 +284,31 @@ interface IGridProps {
   handleCalendarClicks: (e: React.MouseEvent<HTMLDivElement>) => void
   bgColor?: string
   blackoutColor?: string
+  begin?: string
+  blackoutPast?: boolean
+  calendarLength?: number
 }
 function Grid(props: IGridProps) {
 
-  let startingMonth = today.month() + 1;
-  let startingYear = today.year();
+  let startingMonth = props.begin ? parseInt(props.begin.substring(0, 2)) : today.month() + 1;
+  let startingYear = props.begin ? parseInt(props.begin.substring(2)) : today.year();
   let monthsArray = new Array();
+  let calendarLength = props.calendarLength ? props.calendarLength : 12
 
-  monthsArray.push(<CalendarMonth blackoutColor={props.blackoutColor} key={0} strikethroughDays={true} handleCalendarClicks={(e) => props.handleCalendarClicks(e)} month={startingMonth} year={startingYear.toString()} />)
-  startingMonth == 12 ? startingYear++ : startingYear = startingYear;
-  startingMonth == 12 ? startingMonth = 1 : startingMonth++
+  if ((startingMonth == today.month() + 1) && (startingYear == today.year()) && props.blackoutPast) {
+    monthsArray.push(<CalendarMonth blackoutColor={props.blackoutColor} key={0} strikethroughDays={true} handleCalendarClicks={(e) => props.handleCalendarClicks(e)} month={startingMonth} year={startingYear.toString()} />)
+    startingMonth == 12 ? startingYear++ : startingYear = startingYear;
+    startingMonth == 12 ? startingMonth = 1 : startingMonth++
+  }
+  if ((startingMonth == today.month() + 1) && (startingYear == today.year()) && !props.blackoutPast) {
+    calendarLength++
+  }
+  if ((startingMonth != today.month() + 1) && (startingYear != today.year()) && props.blackoutPast) {
 
-  for (let i = 0; i < 12; i++) {
+    //figure out how to blackout all of the past
+  }
+
+  for (let i = 0; i < calendarLength; i++) {
     monthsArray.push(<CalendarMonth blackoutColor={props.blackoutColor} key={i + 1} strikethroughDays={false} handleCalendarClicks={(e) => props.handleCalendarClicks(e)} month={startingMonth} year={startingYear.toString()} />)
     if (startingMonth == 12) {
       startingYear++;

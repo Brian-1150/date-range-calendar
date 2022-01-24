@@ -48,6 +48,7 @@ export const getNextMonth = (num: number) => { //expecting 9 for September
 export const getMonthAsNum = (dateString: string) => {
     let year = parseInt(dateString.substring(dateString.indexOf(" ") + 1));
     let increment = (year - dayjs().year()) * 12;
+    // let increment = year > dayjs().year() ? (year - dayjs().year()) * 12 :
 
     if (dateString.includes('Jan'))
         return 1 + increment;
@@ -94,6 +95,39 @@ export const getMonthAsNum = (dateString: string) => {
 // }
 
 export const getNumberOfDaysInMonth = (month: number, year: string) => {
+    if (month < 0) {
+        console.log(month);
+
+        switch (Math.abs(month % 12)) {
+            case 12: month = 1;
+                break;
+            case 11: month = 2;
+                break;
+            case 10: month = 3;
+                break;
+            case 9: month = 4;
+                break;
+            case 8: month = 5;
+                break;
+            case 7: month = 6;
+                break;
+            case 6: month = 7;
+                break;
+            case 5: month = 8;
+                break;
+            case 4: month = 9;
+                break;
+            case 3: month = 10;
+                break;
+            case 2: month = 11;
+                break;
+            case 1: month = 12;
+                break;
+
+        }
+        console.log(Math.abs(month % 12));
+    }
+
     return dayjs(`${year}-${month}-01`).daysInMonth()
 
 }
