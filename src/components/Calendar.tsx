@@ -11,35 +11,28 @@ type CalendarProps = {
   begin?: string //format mmyyyy(082020 for august 2020)
   calendarLength?: number // in months
   rangeLimit?: number  //default 30
-  bgColor?: string
-  startBgColor?: string
-  endBgColor?: string
-  rangeColor?: string
-  startSet?: (start: string) => void
-  endSet?: (end: string) => void
-  blackoutColor?: string
-  textColor?: string
-  highlightedTextColor?: string
+  bgColor?: string // complete
+  startBgColor?: string //complete
+  endBgColor?: string //complete
+  rangeColor?: string //complete
+  startSet?: (start: string) => void //complete
+  endSet?: (end: string) => void //complete
+  blackoutColor?: string   //complete
+  textColor?: string // affects dayNames, non selected non blackedout numbers NOT MONTHS
+  highlightedTextColor?: string //complete
   blackoutPast?: boolean // option to turn it off only works if custom begin not selected
-
+  monthColor?: string //todo
 }
 
 export const Calendar = (props: CalendarProps) => {
-
   const [pickUpDate, pickUpDateSet] = useState('Pick-up Date')
   const [dropOffDate, dropOffDateSet] = useState('Drop-off Date')
   const [pickUpDayAsNumber, pickUpDayAsNumberSet] = useState(0)
-  // const [pickUpDateAsDateObj, pickUpDateAsDateObjSet] = useState<Dayjs | null>(null)
-  // const [dropOffDateAsDateObj, dropOffDateAsDateObjSet] = useState<Dayjs | null>(null)
   const [pickUpDateSelected, pickUpDateSelectedSet] = useState(false)
   const [dropOffDateSelected, dropOffDateSelectedSet] = useState(false)
   const [pickMonth, pickMonthSet] = useState(0)
   const [monthRangeLimit, monthRangeLimitSet] = useState(2); // 24 month limit
   const [dayRangeLimit, dayRangeLimitSet] = useState(31);
-  // const [pickUpTime, pickUpTimeSet] = useState('Pick-up Time')
-  // const [dropOffTime, dropOffTimeSet] = useState('Drop-off Time')
-  // const [pickUpTimeSelected, pickUpTimeSelectedSet] = useState(false)
-  // const [dropOffTimeSelected, dropOffTimeSelectedSet] = useState(false)
   const { width } = useViewPortSize();
   const [incoming] = useState<CalendarProps>({
     bgColor: props.bgColor ? props.bgColor : "gray",
@@ -53,8 +46,9 @@ export const Calendar = (props: CalendarProps) => {
     textColor: props.textColor ? props.textColor : 'black',
     highlightedTextColor: props.highlightedTextColor ? props.highlightedTextColor : 'white',
     blackoutPast: props.blackoutPast == false ? false : true,
-
+    monthColor: props.monthColor ? props.monthColor : '#0067B4'
   });
+
   useEffect(() => {
     let days = 30;
     if (props.rangeLimit) {
@@ -66,45 +60,31 @@ export const Calendar = (props: CalendarProps) => {
         }
         days = days + 30
       }
-      for (let i = 0; i > 10; i++) {
-
-      }
-
     }
-
   }, []);
 
   useEffect(() => {
     if (props.startSet)
       props.startSet(pickUpDate)
-
   }, [pickUpDate]);
 
   useEffect(() => {
     if (props.endSet)
       props.endSet(dropOffDate)
-
   }, [dropOffDate]);
 
   const handleCalendarClicks = (e: React.MouseEvent<HTMLDivElement>) => {
-
-
     const input = e.target as HTMLDivElement;
     let monthYear = input.parentElement?.parentElement?.previousSibling?.previousSibling?.textContent as string
-
     if (width > 999) {
       monthYear = monthYear.slice(0, -1) //Removes the navigation '>' & '<'
     }
     let targetMonth = calendarHelper.getMonthAsNum(monthYear)
-
     let inbetweendays = 0;
     let targetYear = parseInt(monthYear.substring(monthYear.indexOf(" ") + 1))
-
     for (let i = pickMonth + 1; i < targetMonth; i++) {
       inbetweendays += calendarHelper.getNumberOfDaysInMonth(i, targetYear.toString())
-
       if (i % 13 == 0) {
-
         targetYear++
       }
     }
@@ -156,7 +136,7 @@ export const Calendar = (props: CalendarProps) => {
   const highlightSelection = (e: React.MouseEvent<HTMLDivElement>) => {
     const input = e.target as HTMLElement;
     input.style.color = incoming.highlightedTextColor as string
-    input.style.backgroundColor = incoming.startBgColor as string
+    input.style.backgroundColor = pickUpDateSelected ? incoming.endBgColor as string : incoming.startBgColor as string
   }
   const resetDivs = (times?: boolean) => {
     let timeDivs = document.querySelectorAll('aside p, section p')
@@ -176,9 +156,6 @@ export const Calendar = (props: CalendarProps) => {
         box.style.color = 'inherit';
         box.style.fontWeight = 'inherit';
         box.style.backgroundColor = 'inherit';
-        // if ((box.parentElement?.parentElement?.previousSibling?.previousSibling?.textContent as string).includes(dayjs().format('MMMM')) && (parseInt(div.textContent as string)) < parseInt(dayjs().format('D'))) {
-        //   box.style.color = incoming.blackoutColor as string;
-        // }
       }
     })
   }
@@ -196,9 +173,6 @@ export const Calendar = (props: CalendarProps) => {
     let row1ofPrevMonth = width > 999 ?
       input.parentElement?.parentElement?.previousElementSibling?.previousElementSibling?.parentElement?.previousElementSibling?.firstChild?.nextSibling?.nextSibling?.firstChild
       : input.parentElement?.parentElement?.previousSibling?.previousSibling?.previousSibling?.firstChild;
-    // let row1OfPrevPrevMonth = input.parentElement?.parentElement?.previousElementSibling?.previousElementSibling?.previousElementSibling?.previousElementSibling?.previousElementSibling?.previousElementSibling;
-
-    // console.log('before', row1OfPrevPrevMonth);
 
     if (targetMonth == pickMonth) {
       for (let i = 0; i < 6; i++) {
@@ -213,8 +187,6 @@ export const Calendar = (props: CalendarProps) => {
       }
     }
     else if (proceed) {
-
-
       for (let i = 0; i < 6; i++) {
         let child = row1ofTargetMonth?.firstChild as HTMLElement
         for (let j = 0; j < 7; j++) {
@@ -223,7 +195,6 @@ export const Calendar = (props: CalendarProps) => {
           }
           child = child?.nextSibling as HTMLElement
         }
-
         row1ofTargetMonth = row1ofTargetMonth?.nextSibling ? row1ofTargetMonth.nextSibling : row1ofTargetMonth
       }
       let diff = targetMonth - pickMonth;
@@ -251,34 +222,17 @@ export const Calendar = (props: CalendarProps) => {
         }
         row1ofPrevMonth = row1ofPrevMonth?.parentElement?.previousSibling?.previousSibling?.previousSibling?.firstChild
       }
-
-
-      // this needs to target pickMonth not prevMonth
-      // for (let i = 0; i < 6; i++) {
-      //   let child2 = row1ofPrevMonth?.firstChild as HTMLElement
-      //   for (let j = 0; j < 7; j++) {
-      //     if (parseInt(child2?.textContent as string) > pudan) {
-      //       child2.style.backgroundColor = incoming.rangeColor as string
-      //     }
-      //     child2 = child2?.nextSibling as HTMLElement
-      //   }
-      //   row1ofPrevMonth = row1ofPrevMonth?.nextSibling
-      // }
     }
   }
-
-
   return (
     <>
-      <div>
+      <styles.calendar_container color={props.textColor}>
         <Grid blackoutPast={incoming.blackoutPast} calendarLength={incoming.calendarLength} begin={incoming.begin} blackoutColor={props.blackoutColor} handleCalendarClicks={(e) => handleCalendarClicks(e)} bgColor={props.bgColor}
         />
-      </div>
-
+      </styles.calendar_container>
     </>
   );
 }
-
 
 interface IGridProps {
   handleCalendarClicks: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -288,8 +242,8 @@ interface IGridProps {
   blackoutPast?: boolean
   calendarLength?: number
 }
-function Grid(props: IGridProps) {
 
+function Grid(props: IGridProps) {
   let startingMonth = props.begin ? parseInt(props.begin.substring(0, 2)) : today.month() + 1;
   let startingYear = props.begin ? parseInt(props.begin.substring(2)) : today.year();
   let monthsArray = new Array();
@@ -327,7 +281,6 @@ function Grid(props: IGridProps) {
   );
 }
 
-
 interface IMonthProps {
   month: number
   year: string
@@ -354,12 +307,10 @@ function CalendarMonth(props: IMonthProps) {
         <CalendarRow blackoutColor={props.blackoutColor} strikethroughDays={props.strikethroughDays} handleCalendarClicks={(e) => props.handleCalendarClicks(e)} dayOfWeek={dayOfWeek} numberOfDaysInMonth={numberOfDaysInMonth} rowNumber={3} />
         {(numberOfRows >= 5) && <CalendarRow blackoutColor={props.blackoutColor} strikethroughDays={props.strikethroughDays} handleCalendarClicks={(e) => props.handleCalendarClicks(e)} dayOfWeek={dayOfWeek} numberOfDaysInMonth={numberOfDaysInMonth} rowNumber={4} />}
         {(numberOfRows == 6) && <CalendarRow blackoutColor={props.blackoutColor} strikethroughDays={props.strikethroughDays} handleCalendarClicks={(e) => props.handleCalendarClicks(e)} dayOfWeek={dayOfWeek} numberOfDaysInMonth={numberOfDaysInMonth} rowNumber={5} />}
-
       </styles.grid_flex_container>
     </>
   );
 }
-
 
 interface IRowProps {
   rowNumber: number,
@@ -371,7 +322,6 @@ interface IRowProps {
 }
 
 function CalendarRow(props: IRowProps) {
-
   const dates = calendarHelper.getOneMonthArray(props.dayOfWeek, props.numberOfDaysInMonth)
   let rowNumber = 0;
   rowNumber += props.rowNumber;
@@ -383,16 +333,13 @@ function CalendarRow(props: IRowProps) {
       <styles.flex_row>
         {
           dates.slice(startIndex, endIndex).map((d, index) =>
-
             <CalendarBox key={index} value={d} strikethroughDays={props.strikethroughDays} blackoutColor={props.blackoutColor} handleCalendarClicks={props.handleCalendarClicks} />
-
           )
         }
       </styles.flex_row>
     </>
   )
 }
-
 
 interface CalendarBoxProps {
   value: number | string
@@ -403,7 +350,6 @@ interface CalendarBoxProps {
 }
 
 function CalendarBox(props: CalendarBoxProps) {
-
   let value = props.value
   let blackoutDays = new Array()
   if (props.strikethroughDays) {
@@ -420,8 +366,7 @@ function CalendarBox(props: CalendarBoxProps) {
   }
   return (
     <styles.grid_flex_container_p
-      onClick={props.handleCalendarClicks} >        {value}
+      onClick={props.handleCalendarClicks}> {value}
     </styles.grid_flex_container_p>
-
   );
 }
