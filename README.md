@@ -1,181 +1,116 @@
-# TSDX React w/ Storybook User Guide
+# date-range-calendar
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+> A calendar and date/date-range picker for react.
 
-> This TSDX setup is meant for developing React component libraries (not apps!) that can be published to NPM. If you’re looking to build a React-based app, you should use `create-react-app`, `razzle`, `nextjs`, `gatsby`, or `react-static`.
+- [Dependencies](#dependencies)
+- [Setup](#setup)
+- [Options](#options)
 
-> If you’re new to TypeScript and React, checkout [this handy cheatsheet](https://github.com/sw-yx/react-typescript-cheatsheet/)
+## Dependencies
 
-## Commands
+- dayjs
+- styled-components
 
-TSDX scaffolds your new library inside `/src`, and also sets up a [Parcel-based](https://parceljs.org) playground for it inside `/example`.
+## Setup
 
-The recommended workflow is to run TSDX in one terminal:
+`npm i date-range-calendar`
 
-```bash
-npm start # or yarn start
+## GitHub
+https://github.com/Brian-1150/date-range-calendar
+
+## Code Examples
+
+Default calendar with no props:
+<img src='./img/default_example.png' width='100'>
+
 ```
+import { Calendar } from 'date-range-calendar';
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
-
-Then run either Storybook or the example playground:
-
-### Storybook
-
-Run inside another terminal:
-
-```bash
-yarn storybook
-```
-
-This loads the stories from `./stories`.
-
-> NOTE: Stories should reference the components as if using the library, similar to the example playground. This means importing from the root project directory. This has been aliased in the tsconfig and the storybook webpack config as a helper.
-
-### Example
-
-Then run the example inside another:
-
-```bash
-cd example
-npm i # or yarn to install dependencies
-npm start # or yarn start
-```
-
-The default example imports and live reloads whatever is in `/dist`, so if you are seeing an out of date component, make sure TSDX is running in watch mode like we recommend above. **No symlinking required**, we use [Parcel's aliasing](https://parceljs.org/module_resolution.html#aliases).
-
-To do a one-off build, use `npm run build` or `yarn build`.
-
-To run tests, use `npm test` or `yarn test`.
-
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle analysis
-
-Calculates the real cost of your library using [size-limit](https://github.com/ai/size-limit) with `npm run size` and visulize it with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/example
-  index.html
-  index.tsx       # test your component here in a demo app
-  package.json
-  tsconfig.json
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-/stories
-  Thing.stories.tsx # EDIT THIS
-/.storybook
-  main.js
-  preview.js
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
-```
-
-#### React Testing Library
-
-We do not set up `react-testing-library` for you yet, we welcome contributions and documentation on this.
-
-### Rollup
-
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [size-limit](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
+function App() {
+  return (
+    <Calendar />
+  );
 }
+export default App;
 ```
 
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
+Pass props to customize colors:
+<img src='./img/colors_example.png' width='100'>
 
-## Module Formats
+```
+import { Calendar } from 'date-range-calendar';
 
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Deploying the Example Playground
-
-The Playground is just a simple [Parcel](https://parceljs.org) app, you can deploy it anywhere you would normally deploy that. Here are some guidelines for **manually** deploying with the Netlify CLI (`npm i -g netlify-cli`):
-
-```bash
-cd example # if not already in the example folder
-npm run build # builds to dist
-netlify deploy # deploy the dist folder
+function App() {
+  return (
+    <Calendar
+      bgColor='#e0ffff'
+      startBgColor='#228b22'
+      endBgColor='#ab4e52'
+      rangeColor='#faf0be'
+    />
+  );
+}
+export default App;
 ```
 
-Alternatively, if you already have a git repo connected, you can set up continuous deployment with Netlify:
+Pass set functions to receive start and end date values:
+<img src='./img/callback_example.png' width='100'>
 
-```bash
-netlify init
-# build command: yarn build && cd example && yarn && yarn build
-# directory to deploy: example/dist
-# pick yes for netlify.toml
+```
+import React, { useState } from 'react';
+import { Calendar } from 'date-range-calendar';
+
+function App() {
+  const [startDate, startDateSet] = useState('');
+  const [endDate, endDateSet] = useState('');
+
+  return (
+    <div style={{padding: '2%'}}>
+
+      <div style={{border: '1px solid black', padding: '5%', margin: '2%'}}>
+        <div>Start Date: {startDate}</div>
+        <div>End Date: {endDate}</div>
+      </div>
+    <div>
+            <Calendar
+
+        startSet={startDateSet}
+        endSet={endDateSet}
+        />
+    </div>
+        </div>
+  );
+}
+export default App;
 ```
 
-## Named Exports
+## Options
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
+  <p>
+    <b>begin:</b> string in format mmyyyy(082020 for august 2020) <br>
+    &nbsp;&nbsp;default is current month of current year
+     </p>
 
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).
-
-## Usage with Lerna
-
-When creating a new package with TSDX within a project set up with Lerna, you might encounter a `Cannot resolve dependency` error when trying to run the `example` project. To fix that you will need to make changes to the `package.json` file _inside the `example` directory_.
-
-The problem is that due to the nature of how dependencies are installed in Lerna projects, the aliases in the example project's `package.json` might not point to the right place, as those dependencies might have been installed in the root of your Lerna project.
-
-Change the `alias` to point to where those packages are actually installed. This depends on the directory structure of your Lerna project, so the actual path might be different from the diff below.
-
-```diff
-   "alias": {
--    "react": "../node_modules/react",
--    "react-dom": "../node_modules/react-dom"
-+    "react": "../../../node_modules/react",
-+    "react-dom": "../../../node_modules/react-dom"
-   },
-```
-
-An alternative to fixing this problem would be to remove aliases altogether and define the dependencies referenced as aliases as dev dependencies instead. [However, that might cause other problems.](https://github.com/palmerhq/tsdx/issues/64)
+  <p> <b>calendarLength:</b> number in months<br>
+    &nbsp;&nbsp;default is 24 months
+  </p>
+  <p> <b>rangeLimit:</b> number in days<br>
+    &nbsp;&nbsp;default is 30 days</p>
+  <p> <b>bgColor:</b> string <br>
+  &nbsp;&nbsp; default is gray</p>
+  <p> <b>startBgColor:</b> string <br>
+  &nbsp;&nbsp;default is steelblue</p>
+  <p> <b>endBgColor:</b> string <br>
+  &nbsp;&nbsp;default is steelblue</p>
+  <p> <b>rangeColor:</b> string <br>
+   &nbsp;&nbsp;default is dodgerblue</p>
+  <p> <b>startSet, endSet:</b> (end: string) => void <br>
+  &nbsp;&nbsp;you need to pass a set function as a prop in order to get the start/end values.  Format will be 'dd Month Year' (01 April 2022) See the example above</p>
+  <p> <b>blackoutColor:</b> string   <br>
+    &nbsp;&nbsp;default is red</p>
+  <p> <b>textColor:</b> string <br>
+   &nbsp;&nbsp; affects dayNames, non selected non blackout numbers NOT MONTHS. Default is black.</p>
+  <p> <b>monthColor:</b> string 
+   &nbsp;&nbsp;change the color of the names of the months. Default is #0067B4</p>
+  <p> <b>highlightedTextColor:</b> string //complete</p>
+  <p> <b>blackoutPast:</b> boolean // option to turn it off only works if custom begin not selected</p>

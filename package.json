@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.2",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -49,28 +49,28 @@
     }
   ],
   "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@size-limit/preset-small-lib": "^7.0.5",
-    "@storybook/addon-essentials": "^6.4.13",
+    "@babel/core": "^7.17.8",
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@storybook/addon-essentials": "^6.4.20",
     "@storybook/addon-info": "^5.3.21",
-    "@storybook/addon-links": "^6.4.13",
-    "@storybook/addons": "^6.4.13",
-    "@storybook/react": "^6.4.13",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "babel-loader": "^8.2.3",
+    "@storybook/addon-links": "^6.4.20",
+    "@storybook/addons": "^6.4.20",
+    "@storybook/react": "^6.4.20",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "babel-loader": "^8.2.4",
     "husky": "^7.0.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
-    "size-limit": "^7.0.5",
+    "size-limit": "^7.0.8",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.4"
+    "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@types/styled-components": "^5.1.20",
-    "dayjs": "^1.10.7",
-    "styled-components": "^5.3.3"
+    "@types/styled-components": "^5.1.24",
+    "dayjs": "^1.11.0",
+    "styled-components": "^5.3.5"
   }
 }
