@@ -10,7 +10,7 @@ export const main_flex_container = styled.div`
   background-color: ${props => props.color ? props.color : 'lightgray'};
   display: flex;
   flex-flow: column nowrap;
-  width: 90vw;
+  width: 90%;
   margin: 0 auto;
   padding-bottom: 180px;
   align-items: center;
