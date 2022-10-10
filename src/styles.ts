@@ -62,12 +62,12 @@ export const grid_flex_container_p = styled.p`
   width: 30px;
   height: 30px;
   border-radius: 50%;
+  cursor: pointer;
 `;
 
 export const pick_dates = styled.div`
   color: black;
   text-decoration: underline;
-  cursor: pointer;
 `;
 
 

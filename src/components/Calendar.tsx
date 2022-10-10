@@ -22,6 +22,7 @@ type CalendarProps = {
   highlightedTextColor?: string //complete
   blackoutPast?: boolean // option to turn it off only works if custom begin not selected
   monthColor?: string //todo
+  mobile?: boolean //todo
 }
 
 export const Calendar = (props: CalendarProps) => {
@@ -33,7 +34,6 @@ export const Calendar = (props: CalendarProps) => {
   const [pickMonth, pickMonthSet] = useState(0)
   const [monthRangeLimit, monthRangeLimitSet] = useState(2); // 24 month limit
   const [dayRangeLimit, dayRangeLimitSet] = useState(31);
-  const { width } = useViewPortSize();
   const [incoming] = useState<CalendarProps>({
     bgColor: props.bgColor ? props.bgColor : "gray",
     rangeLimit: props.rangeLimit ? props.rangeLimit : 30,
@@ -46,7 +46,8 @@ export const Calendar = (props: CalendarProps) => {
     textColor: props.textColor ? props.textColor : 'black',
     highlightedTextColor: props.highlightedTextColor ? props.highlightedTextColor : 'white',
     blackoutPast: props.blackoutPast == false ? false : true,
-    monthColor: props.monthColor ? props.monthColor : '#0067B4'
+    monthColor: props.monthColor ? props.monthColor : '#0067B4',
+    mobile: props.mobile ? props.mobile : true
   });
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export const Calendar = (props: CalendarProps) => {
   const handleCalendarClicks = (e: React.MouseEvent<HTMLDivElement>) => {
     const input = e.target as HTMLDivElement;
     let monthYear = input.parentElement?.parentElement?.previousSibling?.previousSibling?.textContent as string
-    if (width > 999) {
+    if (!props.mobile) {
       monthYear = monthYear.slice(0, -1) //Removes the navigation '>' & '<'
     }
     let targetMonth = calendarHelper.getMonthAsNum(monthYear)
@@ -170,7 +171,7 @@ export const Calendar = (props: CalendarProps) => {
      */
     const input = e.target as HTMLElement;
     let row1ofTargetMonth = input.parentElement?.parentElement?.firstChild;
-    let row1ofPrevMonth = width > 999 ?
+    let row1ofPrevMonth = !props.mobile ?
       input.parentElement?.parentElement?.previousElementSibling?.previousElementSibling?.parentElement?.previousElementSibling?.firstChild?.nextSibling?.nextSibling?.firstChild
       : input.parentElement?.parentElement?.previousSibling?.previousSibling?.previousSibling?.firstChild;
 
