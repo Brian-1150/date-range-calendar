@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 import * as calendarHelper from './CalendarHelpers'
 import * as styles from '../styles'
 import dayjs from "dayjs";
-import useViewPortSize from "../Hooks/viewPortSize";
 
 // { children }: { children: ReactNode }
 const today = dayjs();
